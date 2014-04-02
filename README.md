@@ -2,8 +2,10 @@ JBench & JMethodMonitor
 =======================
 JBench (alpha): A small Java annotation driven benchmark testing service framework.
 
-JMethodMonitor (alpha): A small Java annotation defined, aspect driven, method execution / duration monitor service framework.
-Two utility frameworks are packaged together in a single jar using maven.
+JMethodMonitor (alpha): A small Java annotation defined, aspect driven, method
+execution / duration monitor spring service framework.
+
+JBench and JMethodMonitor utility frameworks are packaged together in a single jar using maven.
 
 Running the tests
 -----------------
@@ -12,7 +14,7 @@ This project is using maven to compile, package and run JUnit test of time serie
     git clone https://github.com/temesoft/jbench.git
     cd jbench
     mvn clean package
-    cp target/jbench-ver.jar /your/project/lib/
+    cp target/jbench-`{ver}`.jar /your/project/lib/
 
 JBench usage
 ------------
@@ -32,6 +34,7 @@ context when available (spring app) or using Java reflection api.
  }
 
  @JBench
+ @JMethodMonitor
  public class BenchMe
  {
     @JBench(maxIterations =  10000)
@@ -96,15 +99,15 @@ metered and statistics data collected.
  .....
  sample output
  .....
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newArrayListSynchronized', minTime=0, maxTime=1, lastTime=0, avgTime=6.000000000000028E-4, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap_Synchronized', minTime=0, maxTime=1, lastTime=0, avgTime=5.000000000000008E-4, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='sqrtOfRandom', minTime=0, maxTime=22, lastTime=0, avgTime=0.005099999999999965, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='collectionsSingletonList', minTime=0, maxTime=1, lastTime=0, avgTime=0.001699999999999999, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newArrayList', minTime=0, maxTime=1, lastTime=0, avgTime=3.000000000000004E-4, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap', minTime=0, maxTime=1, lastTime=0, avgTime=1.9999999999999893E-4, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='getUUID', minTime=0, maxTime=0, lastTime=0, avgTime=0.0, callCount=10}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap_Concurrent', minTime=0, maxTime=1, lastTime=0, avgTime=0.0010000000000000035, callCount=10000}
- JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='uuid', minTime=0, maxTime=8, lastTime=0, avgTime=0.012800000000000016, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='newArrayListSynchronized', minTime=0, maxTime=1, lastTime=0, avgTime=6.000000000000028E-4, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='newHashMap_Synchronized', minTime=0, maxTime=1, lastTime=0, avgTime=5.000000000000008E-4, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='sqrtOfRandom', minTime=0, maxTime=22, lastTime=0, avgTime=0.005099999999999965, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='collectionsSingletonList', minTime=0, maxTime=1, lastTime=0, avgTime=0.001699999999999999, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='newArrayList', minTime=0, maxTime=1, lastTime=0, avgTime=3.000000000000004E-4, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='newHashMap', minTime=0, maxTime=1, lastTime=0, avgTime=1.9999999999999893E-4, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='getUUID', minTime=0, maxTime=0, lastTime=0, avgTime=0.0, callCount=10}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='newHashMap_Concurrent', minTime=0, maxTime=1, lastTime=0, avgTime=0.0010000000000000035, callCount=10000}
+ > JMethodMonitorStatistics{className='BenchMe', methodName='uuid', minTime=0, maxTime=8, lastTime=0, avgTime=0.012800000000000016, callCount=10000}
  ......
 </pre>
 
