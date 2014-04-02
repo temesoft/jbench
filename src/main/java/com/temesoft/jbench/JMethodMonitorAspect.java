@@ -9,8 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 
 /**
- * Aspect for monitoring duration metrics of methods within classes annotated with @JBench
- * or
+ * Aspect for monitoring duration metrics of methods
+ * within classes annotated with @JMethodMonitor
+ * 
  */
 @Component
 @Aspect

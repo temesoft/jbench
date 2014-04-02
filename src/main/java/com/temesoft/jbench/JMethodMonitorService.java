@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Dmitriy T
+ * 
  */
 @Component
 public class JMethodMonitorService

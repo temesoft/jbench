@@ -3,7 +3,7 @@ package com.temesoft.jbench;
 import java.io.Serializable;
 
 /**
- * @author Dmitriy T
+ * 
  */
 public class JMethodMonitorStatistics
     implements Serializable
