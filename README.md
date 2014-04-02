@@ -1,7 +1,8 @@
 JBench & JMethodMonitor
 =======================
-JBench: A small Java annotation driven benchmark testing service framework.
-JMethodMonitor: A small Java annotation defined, aspect driven, method execution / duration monitor service framework.
+JBench (alpha): A small Java annotation driven benchmark testing service framework.
+
+JMethodMonitor (alpha): A small Java annotation defined, aspect driven, method execution / duration monitor service framework.
 Two utility frameworks are packaged together in a single jar using maven.
 
 Running the tests
@@ -39,8 +40,9 @@ context when available (spring app) or using Java reflection api.
         double d = rnd.nextDouble();
     }
  }
+</pre>
 
-
+<pre>
  .....
  sample output
  .....
@@ -62,15 +64,18 @@ context when available (spring app) or using Java reflection api.
  > newHashMap_Synchronized                             8,431,000                    8               10,000           0.00118638                1,186                  843
  > uuid                                              127,159,000                  127               10,000          0.000078642                   79               12,716
  > newHashMap_Concurrent                              19,231,000                   19               10,000          0.000520075                  520                1,923
-
-
+ ......
 </pre>
+
+
 
 
 JMethodMonitor usage
 --------------------
 JMethodMonitor can be used to find slow, legacy methods within Java application, or to see the
-result of data caching or "lack thereof".
+result of data caching or "lack thereof". Main use is within spring context.
+All spring dispatched bean calls to @JMethodMonitor annotated classes / methods classes with be
+metered and statistics data collected.
 
 <pre>
  public static void main(String [] args) throws InterruptedException
@@ -86,5 +91,20 @@ result of data caching or "lack thereof".
          System.out.println(stats.getValue());
      }
  }
+</pre>
+<pre>
+ .....
+ sample output
+ .....
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newArrayListSynchronized', minTime=0, maxTime=1, lastTime=0, avgTime=6.000000000000028E-4, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap_Synchronized', minTime=0, maxTime=1, lastTime=0, avgTime=5.000000000000008E-4, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='sqrtOfRandom', minTime=0, maxTime=22, lastTime=0, avgTime=0.005099999999999965, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='collectionsSingletonList', minTime=0, maxTime=1, lastTime=0, avgTime=0.001699999999999999, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newArrayList', minTime=0, maxTime=1, lastTime=0, avgTime=3.000000000000004E-4, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap', minTime=0, maxTime=1, lastTime=0, avgTime=1.9999999999999893E-4, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='getUUID', minTime=0, maxTime=0, lastTime=0, avgTime=0.0, callCount=10}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='newHashMap_Concurrent', minTime=0, maxTime=1, lastTime=0, avgTime=0.0010000000000000035, callCount=10000}
+ JMethodMonitorStatistics{className='com.temesoft.jbench.SomeServiceBean', methodName='uuid', minTime=0, maxTime=8, lastTime=0, avgTime=0.012800000000000016, callCount=10000}
+ ......
 </pre>
 
