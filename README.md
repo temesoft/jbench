@@ -14,7 +14,7 @@ This project is using maven to compile, package and run JUnit test of time serie
     git clone https://github.com/temesoft/jbench.git
     cd jbench
     mvn clean package
-    cp target/jbench-`{ver}`.jar /your/project/lib/
+    cp target/jbench-{ver}.jar /your/project/lib/
 
 JBench usage
 ------------
