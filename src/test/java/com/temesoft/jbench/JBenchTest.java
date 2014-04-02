@@ -21,29 +21,20 @@ public class JBenchTest
     SomeServiceBean someServiceBean = null; // will be set by spring
 
     @Test
-    public void testJBenchJMethodMonitor()
+    public void testJBench()
     {
-        displayLine();
         Map<String, JBenchData> benchDataMap = JBenchRunner.executeAll(true);
         assertNotNull("JBenchData map object can not be null", benchDataMap);
         assertEquals("JBenchData map object can not be empty", false, benchDataMap.isEmpty());
+    }
 
+    @Test
+    public void testJMethodMonitor()
+    {
         JMethodMonitorService service = new JMethodMonitorService();
-        for (int i = 0; i < 10; i++)
-        {
-            someServiceBean.getUUID();
-        }
-        assertNotNull("Method monitor stats map can not be null", service.getAllStats());
-        assertEquals("Method monitor stats map can not be empty", false, service.getAllStats().isEmpty());
         for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet())
         {
             System.out.println(stats.getValue());
         }
-        displayLine();
-    }
-
-    private void displayLine()
-    {
-        System.out.println("\n\n--------------------------------------------------------------------------------\n\n");
     }
 }
