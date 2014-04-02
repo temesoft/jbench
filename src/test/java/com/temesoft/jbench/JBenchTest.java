@@ -1,5 +1,8 @@
 package com.temesoft.jbench;
 
+import junit.framework.TestCase;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,19 +16,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * Demo executable of @JBench functionality
  */
 @JBench
-public class JBenchDemo
+public class JBenchTest
+    extends TestCase
 {
     public static final Random rnd = new Random();
 
-    public static void main(String [] args) throws InterruptedException
+    @Test
+    public void testJBench()
     {
-        JMethodMonitorService service = new JMethodMonitorService();
-        JBenchRunner.executeAll(true);
-        for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet())
-        {
-            System.out.println(stats.getValue());
-        }
-        System.out.println("\n\nFinished\n\n");
+        Map<String, JBenchData> benchDataMap = JBenchRunner.executeAll(true);
+        assertNotNull("JBenchData map object can not be null", benchDataMap);
+        assertEquals("JBenchData map object can not be empty", false, benchDataMap.isEmpty());
     }
 
     @JBench(maxIterations =  10000)
