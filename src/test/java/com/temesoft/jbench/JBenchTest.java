@@ -2,85 +2,48 @@ package com.temesoft.jbench;
 
 import junit.framework.TestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Demo executable of @JBench functionality
  */
-@JBench
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "/application-context.xml")
 public class JBenchTest
     extends TestCase
 {
-    public static final Random rnd = new Random();
+    @Autowired
+    SomeServiceBean someServiceBean = null; // will be set by spring
 
     @Test
-    public void testJBench()
+    public void testJBenchJMethodMonitor()
     {
+        displayLine();
         Map<String, JBenchData> benchDataMap = JBenchRunner.executeAll(true);
         assertNotNull("JBenchData map object can not be null", benchDataMap);
         assertEquals("JBenchData map object can not be empty", false, benchDataMap.isEmpty());
+
+        JMethodMonitorService service = new JMethodMonitorService();
+        for (int i = 0; i < 10; i++)
+        {
+            someServiceBean.getUUID();
+        }
+        assertNotNull("Method monitor stats map can not be null", service.getAllStats());
+        assertEquals("Method monitor stats map can not be empty", false, service.getAllStats().isEmpty());
+        for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet())
+        {
+            System.out.println(stats.getValue());
+        }
+        displayLine();
     }
 
-    @JBench(maxIterations =  10000)
-    public final void nextRandomDouble()
+    private void displayLine()
     {
-        double d = rnd.nextDouble();
-    }
-
-    @JBench(maxIterations =  10000)
-    public void sqrtOfRandom()
-    {
-        double d = rnd.nextDouble();
-        Math.sqrt(d);
-    }
-
-    @JBench(maxIterations =  10000)
-    public void collectionsSingletonList()
-    {
-        List<Double> doubleList = Collections.singletonList(rnd.nextDouble());
-    }
-
-    @JBench(maxIterations =  10000)
-    public void newArrayList()
-    {
-        List<Double> doubleList = new ArrayList<Double>();
-    }
-
-    @JBench(maxIterations =  10000)
-    public void newArrayListSynchronized()
-    {
-        List<Double> doubleList = Collections.synchronizedList(new ArrayList<Double>());
-    }
-
-    @JBench(maxIterations =  10000)
-    public void newHashMap()
-    {
-        Map<Double, Double> doubleList = new HashMap<Double, Double>();
-    }
-
-    @JBench(maxIterations =  10000)
-    public void newHashMap_Synchronized()
-    {
-        Map<Double, Double> doubleList = Collections.synchronizedMap(new HashMap<Double, Double>());
-    }
-
-    @JBench(maxIterations =  10000)
-    public void newHashMap_Concurrent()
-    {
-        Map<Double, Double> doubleList = new ConcurrentHashMap<Double, Double>();
-    }
-
-    @JBench(maxIterations =  10000)
-    public void uuid()
-    {
-        String s = UUID.randomUUID().toString();
+        System.out.println("\n\n--------------------------------------------------------------------------------\n\n");
     }
 }
