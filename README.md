@@ -89,6 +89,7 @@ metered and statistics data collected.
         // This is a call to a method annotated with @JMethodMonitor
          test.getUUID();
      }
+     JMethodMonitorService service = new JMethodMonitorService();
      for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet())
      {
          System.out.println(stats.getValue());
