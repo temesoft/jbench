@@ -9,7 +9,6 @@ import java.text.NumberFormat;
 public class JBenchData
     implements Serializable
 {
-    private final NumberFormat nFmt = NumberFormat.getNumberInstance();
 
     private String name;
     private double timePassedNs;
@@ -23,9 +22,6 @@ public class JBenchData
     public JBenchData(String name, double timePassedNs, double timePassedMs, long iterations, double speedNs,
                       double speedMs, double averageNs, double averageMs)
     {
-        nFmt.setGroupingUsed(true);
-        nFmt.setMinimumFractionDigits(0);
-
         this.name = name;
         this.timePassedNs = timePassedNs;
         this.timePassedMs = timePassedMs;
@@ -50,33 +46,6 @@ public class JBenchData
         sb.append(", averageNs=").append(averageNs);
         sb.append(", averageMs=").append(averageMs);
         sb.append('}');
-        return sb.toString();
-    }
-
-    private String formatNumber(double number)
-    {
-        if (number > 10)
-        {
-            nFmt.setMaximumFractionDigits(0);
-        }
-        else
-        {
-            nFmt.setMaximumFractionDigits(9);
-        }
-        return nFmt.format(number);
-    }
-
-    public String toStringPretty()
-    {
-        StringBuffer sb = new StringBuffer();
-        sb.append(String.format("%-50s ", getName()));
-        sb.append(String.format(JBenchRunner.defaultOutputPattern,
-                                             formatNumber(getTimePassedNs()),
-                                             formatNumber(getTimePassedMs()),
-                                             formatNumber(getIterations()),
-                                             formatNumber(getSpeedNs()),
-                                             formatNumber(getSpeedMs()),
-                                             formatNumber(getAverageNs())));
         return sb.toString();
     }
 

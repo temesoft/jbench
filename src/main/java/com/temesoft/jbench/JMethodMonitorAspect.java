@@ -17,7 +17,6 @@ import java.util.Arrays;
 @Aspect
 public class JMethodMonitorAspect
 {
-
     static
     {
         System.out.println(String.format(

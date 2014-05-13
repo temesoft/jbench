@@ -26,7 +26,7 @@ import java.util.Map;
  *
  *  public class BenchTest
  *  {
- *      @JBench(maxIterations = 100000000)
+ *      @JBench(maxIterations = 100)
  *      public void foo()
  *      {
  *          // do something here...
@@ -50,8 +50,8 @@ public final class JBenchRunner
         nFmt.setMinimumFractionDigits(0);
     }
 
-    private final static String defaultHeaderPattern = "%-40s %20s %20s %20s %20s %20s %20s";
-    protected final static String defaultOutputPattern = "%20s %20s %20s %20s %20s %20s";
+    private final static String defaultHeaderPattern = "%-40s %20s %20s %20s %20s %20s";
+    protected final static String defaultOutputPattern = "%20s %20s %20s %20s %20s";
 
     public static Map<String, JBenchData> executeAll(final boolean displayOutput)
     {
@@ -76,7 +76,7 @@ public final class JBenchRunner
             List<Class> classes = new ArrayList<Class>();
             classes.add(JBench_InternalBenchmarks.class);
             classes.addAll(Arrays.asList(classesArray));
-            System.out.println("Loaded " + classes.size() + " classes containing benchmarks:");
+            System.out.println(String.format("Loaded %s classes containing benchmarks:", classes.size()));
             // Printing out benchmark class / bean details
             for (int i = 0; i < classes.size(); i++)
             {
@@ -146,7 +146,7 @@ public final class JBenchRunner
                                 final long startTime = getCurrentTime();
                                 do
                                 {
-                                    method.invoke(newInstance, null); // TODO:  <-- This is faster execution
+                                    method.invoke(newInstance, null); // TODO:  <-- This is much faster execution
 //                                        method.invoke(newInstance); // TODO: than this one.... WHY?
                                     iterations++;
                                 }
@@ -156,7 +156,7 @@ public final class JBenchRunner
                                 if (displayOutput)
                                 {
                                     benchCounter++;
-                                    if (benchCounter == 1)
+                                    if (benchCounter == 2) // display line after 2 internal benchmarks
                                     {
                                         printLines();
                                     }
@@ -204,9 +204,8 @@ public final class JBenchRunner
                                           formatNumber(data.getTimePassedNs()),
                                           formatNumber(data.getTimePassedMs()),
                                           formatNumber(data.getIterations()),
-                                          formatNumber(data.getSpeedNs()),
                                           formatNumber(data.getSpeedMs()),
-                                          formatNumber(data.getAverageNs()));
+                                          formatNumber(data.getAverageMs()));
             System.out.println(output);
         }
         benchmarkData.put(method.getName(), data);
@@ -221,9 +220,8 @@ public final class JBenchRunner
                                           "Time passed (ns)",
                                           "Time passed (ms)",
                                           "Iterations",
-                                          "Speed (exec/ns)",
                                           "Speed (exec/ms)",
-                                          "Average (ns)");
+                                          "Average (ms)");
             System.out.println(output);
             printLines();
         }
@@ -233,7 +231,6 @@ public final class JBenchRunner
     {
         String output2 = String.format(defaultHeaderPattern,
                                        "----------------------------------------",
-                                       "--------------------",
                                        "--------------------",
                                        "--------------------",
                                        "--------------------",
