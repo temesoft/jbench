@@ -3,8 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <properties>
-        <app.version>0.3948</app.version>
+        <app.version>0.3950</app.version>
         <reflections.version>0.9.9-RC1</reflections.version>
+        <velocity.version>1.7</velocity.version>
         <spring.version>3.0.0.RELEASE</spring.version>
         <aspectj.version>1.7.2</aspectj.version>
         <cglib.version>2.2</cglib.version>
@@ -66,6 +67,13 @@
                     <include>*.xml</include>
                 </includes>
             </resource>
+            <resource>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/main/java</directory>
+                <includes>
+                    <include>*.vm</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
@@ -87,6 +95,11 @@
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>${reflections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>${velocity.version}</version>
         </dependency>
 
         <dependency>

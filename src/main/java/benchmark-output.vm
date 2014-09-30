@@ -1,0 +1,15 @@
+<table class="table table-bordered" border="1" cellpadding='10' cellspacing='0'>
+    <thead>
+        <tr>
+            <th>Benchmark name</th>
+            <th>Time passed (ns)</th>
+            <th>Time passed (ms)</th>
+            <th>Iterations</th>
+            <th>Speed (exec/ms)</th>
+            <th>Average (ms)</th>
+        </tr>
+    </thead>
+    <tbody>
+        ${tableBody}
+    </tbody>
+</table>
