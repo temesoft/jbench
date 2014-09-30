@@ -232,7 +232,7 @@ public final class JBenchRunner
                                           formatNumber(data.getAverageMs()));
             System.out.println(output);
         }
-        benchmarkData.put(method.getName(), data);
+        benchmarkData.put(name, data);
     }
 
     private static void printDefaultHeader(final boolean displayOutput) {

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <properties>
-        <app.version>0.3951</app.version>
+        <app.version>0.3952</app.version>
         <reflections.version>0.9.9-RC1</reflections.version>
         <velocity.version>1.7</velocity.version>
         <spring.version>3.0.0.RELEASE</spring.version>
