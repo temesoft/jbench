@@ -91,9 +91,9 @@
 
 <!-- Tabs -->
 <div class="container">
-    <table class="table table-bordered">
+    <table class="table table-bordered table-hover">
         <thead>
-            <tr>
+            <tr style="font-weight: bold;">
                 <th>Benchmark name</th>
                 <th>Time passed (ns)</th>
                 <th>Time passed (ms)</th>
