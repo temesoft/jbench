@@ -50,7 +50,7 @@ public final class JBenchRunner
         nFmt.setMinimumFractionDigits(0);
     }
 
-    private final static String defaultHeaderPattern = "%-40s %20s %20s %20s %20s %20s";
+    private final static String defaultHeaderPattern = "%-50s %20s %20s %20s %20s %20s";
     protected final static String defaultOutputPattern = "%20s %20s %20s %20s %20s";
 
     public static Map<String, JBenchData> executeAll(final boolean displayOutput)
@@ -98,6 +98,7 @@ public final class JBenchRunner
                     System.out.println(String.format("\t- class: %s", aClass.getSimpleName()));
                 }
             }
+            System.out.println("\t\t* spring context to instantiate");
 
             printDefaultHeader(displayOutput);
 
@@ -137,7 +138,10 @@ public final class JBenchRunner
                             {
                                 if (displayOutput)
                                 {
-                                    String workingOnOutput = String.format("%-40s ", method.getName());
+                                    String name = (isSpringBean ?
+                                                   String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
+                                                   String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
+                                    String workingOnOutput = String.format("%-50s ", name);
                                     System.out.print(workingOnOutput);
                                 }
                                 JBench annotation = method.getAnnotation(JBench.class);
@@ -188,9 +192,11 @@ public final class JBenchRunner
         double speedItrPerNs = (double) iterations / (double)(getCurrentTime() - startTime);
         double speedNsPerItr = (double)(getCurrentTime() - startTime) / (double) iterations;
         double speedItrPerMs = speedItrPerNs * 1000000;
-
+        String name = (isSpringBean ?
+                       String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
+                       String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
         JBenchData data = new JBenchData(
-                (isSpringBean ? String.format("%s [spring]",method.getName()) : method.getName()),
+                name,
                 (getCurrentTime() - startTime),
                 (getCurrentTime() - startTime)/1000000l,
                 iterations,

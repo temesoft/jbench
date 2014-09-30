@@ -2,15 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <!--
-
-    Command:
-mvn clean dependency:copy-dependencies
-
-    -->
-
     <properties>
-        <app.version>0.3947</app.version>
+        <app.version>0.3948</app.version>
         <reflections.version>0.9.9-RC1</reflections.version>
         <spring.version>3.0.0.RELEASE</spring.version>
         <aspectj.version>1.7.2</aspectj.version>
