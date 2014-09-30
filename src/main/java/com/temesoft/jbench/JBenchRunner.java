@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,6 +167,7 @@ public final class JBenchRunner
         // create Velocity template output into temp location
         if (!benchmarkData.isEmpty()) {
             try {
+                List<String> keys = new ArrayList<String>(benchmarkData.keySet());
                 File temp = File.createTempFile("benchmark-", ".html");
                 System.out.println(String.format("Benchmarks HTML output: " + temp.getAbsolutePath()));
                 Properties props = new Properties();
@@ -176,16 +178,9 @@ public final class JBenchRunner
                 Template t = ve.getTemplate("benchmark-output.vm");
                 VelocityContext context = new VelocityContext();
                 StringBuilder tableBody = new StringBuilder();
-
-                for (String benchmarkKey : benchmarkData.keySet()) {
+                Collections.sort(keys);
+                for (String benchmarkKey : keys) {
                     JBenchData data = benchmarkData.get(benchmarkKey);
-                    /*
-                    formatNumber(data.getTimePassedNs()),
-                                                              formatNumber(data.getTimePassedMs()),
-                                                              formatNumber(data.getIterations()),
-                                                              formatNumber(data.getSpeedMs()),
-                                                              formatNumber(data.getAverageMs()))
-                     */
                     tableBody
                             .append("<tr>")
                             .append("<td>").append(data.getName()).append("</td>")
