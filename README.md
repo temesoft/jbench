@@ -112,3 +112,21 @@ metered and statistics data collected.
  ......
 </pre>
 
+Sample html output
+------------------
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr style="font-weight: bold;">
+            <th>Benchmark name</th>
+            <th>Time passed (ns)</th>
+            <th>Time passed (ms)</th>
+            <th>Iterations</th>
+            <th>Speed (exec/ms)</th>
+            <th>Average (ms)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>JBench_InternalBenchmarks.empty</td><td>251,939,000</td><td>251</td><td>100,000,000</td><td>397,839</td><td>0</td></tr><tr><td>JBench_InternalBenchmarks.sleepOneSec</td><td>1,001,488,000</td><td>1,001</td><td>1</td><td>0.001</td><td>1,001</td></tr><tr><td>SomeServiceBean.collectionsSingletonList *</td><td>48,479,000</td><td>48</td><td>10,000</td><td>207</td><td>0.0048</td></tr><tr><td>SomeServiceBean.newArrayList *</td><td>15,534,000</td><td>15</td><td>10,000</td><td>647</td><td>0.0015</td></tr><tr><td>SomeServiceBean.newArrayListSynchronized *</td><td>17,691,000</td><td>17</td><td>10,000</td><td>568</td><td>0.0018</td></tr><tr><td>SomeServiceBean.newHashMap *</td><td>7,980,000</td><td>7</td><td>10,000</td><td>1,266</td><td>0.0008</td></tr><tr><td>SomeServiceBean.newHashMap_Concurrent *</td><td>18,461,000</td><td>18</td><td>10,000</td><td>544</td><td>0.0018</td></tr><tr><td>SomeServiceBean.newHashMap_Synchronized *</td><td>10,048,000</td><td>10</td><td>10,000</td><td>1,003</td><td>0.001</td></tr><tr><td>SomeServiceBean.nextRandomDouble *</td><td>10,878,000</td><td>10</td><td>10,000</td><td>925</td><td>0.0011</td></tr><tr><td>SomeServiceBean.sqrtOfRandom *</td><td>136,274,000</td><td>136</td><td>10,000</td><td>73</td><td>0.0136</td></tr><tr><td>SomeServiceBean.uuid *</td><td>119,048,000</td><td>119</td><td>10,000</td><td>84</td><td>0.0119</td></tr>
+    </tbody>
+</table>
+

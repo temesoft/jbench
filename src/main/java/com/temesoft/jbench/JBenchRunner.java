@@ -168,7 +168,8 @@ public final class JBenchRunner
         if (!benchmarkData.isEmpty()) {
             try {
                 List<String> keys = new ArrayList<String>(benchmarkData.keySet());
-                File temp = File.createTempFile("benchmark-", ".html");
+
+                File temp = new File(String.format("%s/jbench-%s.html", System.getProperty("java.io.tmpdir"), System.currentTimeMillis()));
                 System.out.println(String.format("Benchmarks HTML output: " + temp.getAbsolutePath()));
                 Properties props = new Properties();
                 props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");

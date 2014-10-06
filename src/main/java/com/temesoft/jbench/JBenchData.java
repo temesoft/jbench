@@ -1,14 +1,12 @@
 package com.temesoft.jbench;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 
 /**
  * JBenchData - object haling the statistical metrics for the benchmark execution
  */
 public class JBenchData
-    implements Serializable
-{
+        implements Serializable {
 
     private String name;
     private double timePassedNs;
@@ -20,8 +18,7 @@ public class JBenchData
     private double averageMs;
 
     public JBenchData(String name, double timePassedNs, double timePassedMs, long iterations, double speedNs,
-                      double speedMs, double averageNs, double averageMs)
-    {
+                      double speedMs, double averageNs, double averageMs) {
         this.name = name;
         this.timePassedNs = timePassedNs;
         this.timePassedMs = timePassedMs;
@@ -33,9 +30,8 @@ public class JBenchData
     }
 
     @Override
-    public String toString()
-    {
-        final StringBuffer sb = new StringBuffer();
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
         sb.append("JBenchData");
         sb.append("{name='").append(name).append('\'');
         sb.append(", timePassedNs=").append(timePassedNs);
@@ -49,43 +45,35 @@ public class JBenchData
         return sb.toString();
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public double getTimePassedNs()
-    {
+    public double getTimePassedNs() {
         return timePassedNs;
     }
 
-    public double getTimePassedMs()
-    {
+    public double getTimePassedMs() {
         return timePassedMs;
     }
 
-    public long getIterations()
-    {
+    public long getIterations() {
         return iterations;
     }
 
-    public double getSpeedNs()
-    {
+    public double getSpeedNs() {
         return speedNs;
     }
 
-    public double getSpeedMs()
-    {
+    public double getSpeedMs() {
         return speedMs;
     }
 
-    public double getAverageNs()
-    {
+    public double getAverageNs() {
         return averageNs;
     }
 
-    public double getAverageMs()
-    {
+    public double getAverageMs() {
         return averageMs;
     }
 }
