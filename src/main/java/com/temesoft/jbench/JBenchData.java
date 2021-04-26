@@ -1,12 +1,12 @@
 package com.temesoft.jbench;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 /**
- * JBenchData - object haling the statistical metrics for the benchmark execution
+ * JBenchData - object holding the statistical metrics for the benchmark execution
  */
-public class JBenchData
-        implements Serializable {
+public class JBenchData implements Serializable {
 
     private String name;
     private double timePassedNs;
@@ -17,8 +17,14 @@ public class JBenchData
     private double averageNs;
     private double averageMs;
 
-    public JBenchData(String name, double timePassedNs, double timePassedMs, long iterations, double speedNs,
-                      double speedMs, double averageNs, double averageMs) {
+    public JBenchData(final String name,
+                      final double timePassedNs,
+                      final double timePassedMs,
+                      final long iterations,
+                      final double speedNs,
+                      final double speedMs,
+                      final double averageNs,
+                      final double averageMs) {
         this.name = name;
         this.timePassedNs = timePassedNs;
         this.timePassedMs = timePassedMs;
@@ -31,18 +37,16 @@ public class JBenchData
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("JBenchData");
-        sb.append("{name='").append(name).append('\'');
-        sb.append(", timePassedNs=").append(timePassedNs);
-        sb.append(", timePassedMs=").append(timePassedMs);
-        sb.append(", iterations=").append(iterations);
-        sb.append(", speedNs=").append(speedNs);
-        sb.append(", speedMs=").append(speedMs);
-        sb.append(", averageNs=").append(averageNs);
-        sb.append(", averageMs=").append(averageMs);
-        sb.append('}');
-        return sb.toString();
+        return new StringJoiner(", ", JBenchData.class.getSimpleName() + "[", "]")
+                .add("name='" + name + "'")
+                .add("timePassedNs=" + timePassedNs)
+                .add("timePassedMs=" + timePassedMs)
+                .add("iterations=" + iterations)
+                .add("speedNs=" + speedNs)
+                .add("speedMs=" + speedMs)
+                .add("averageNs=" + averageNs)
+                .add("averageMs=" + averageMs)
+                .toString();
     }
 
     public String getName() {

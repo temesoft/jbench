@@ -6,6 +6,8 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +31,7 @@ import java.util.Properties;
 
 /**
  * Single thread static runner, executor of the benchmark test annotated methods.
- *
+ * <p>
  * Example call:
  *
  * <pre>
@@ -46,8 +48,9 @@ import java.util.Properties;
  * </pre>
  */
 @Component
-public final class JBenchRunner
-        implements ApplicationContextAware {
+public final class JBenchRunner implements ApplicationContextAware {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JBenchRunner.class);
 
     @Autowired
     private static ApplicationContext applicationContext = null;
@@ -65,10 +68,10 @@ public final class JBenchRunner
     public static Map<String, JBenchData> executeAll(final boolean displayOutput) {
         Reflections reflections = new Reflections(""); // get all classes
         List<Class<?>> annotated = new ArrayList<Class<?>>(reflections.getTypesAnnotatedWith(JBench.class));
-        return execute(displayOutput, annotated.toArray(new Class[annotated.size()]));
+        return execute(displayOutput, annotated.toArray(new Class[0]));
     }
 
-    public static Map<String, JBenchData> execute(final boolean displayOutput, Class... classesArray) {
+    public static Map<String, JBenchData> execute(final boolean displayOutput, final Class... classesArray) {
         final Map<String, JBenchData> benchmarkData = new HashMap<String, JBenchData>();
         if (applicationContext == null) {
             System.out.println("SpringFramework application context is not available");
@@ -76,21 +79,19 @@ public final class JBenchRunner
             System.out.println("SpringFramework application context is available");
         }
         if (classesArray != null) {
-            List<Class> classes = new ArrayList<Class>();
+            final List<Class> classes = new ArrayList<>();
             classes.add(JBench_InternalBenchmarks.class);
             classes.addAll(Arrays.asList(classesArray));
             System.out.println(String.format("Loaded %s classes containing benchmarks:", classes.size()));
             // Printing out benchmark class / bean details
-            for (int i = 0; i < classes.size(); i++) {
-                Class aClass = classes.get(i);
+            for (final Class aClass : classes) {
                 final String camelCasedBeanName = camelCaseWord(aClass.getSimpleName());
                 Object possibleInstance = null;
                 try {
                     possibleInstance = applicationContext.getBean(camelCasedBeanName);
-                    if (possibleInstance != null) {
-                        System.out.println(String.format("\t- bean: %s", aClass.getSimpleName()));
-                    }
+                    System.out.println(String.format("\t- bean: %s", aClass.getSimpleName()));
                 } catch (Exception e) {
+                    // not a spring bean
                 }
                 // If the spring bean of this class is not found try creating instance using newInstance()
                 if (possibleInstance == null) {
@@ -102,18 +103,16 @@ public final class JBenchRunner
             printDefaultHeader(displayOutput);
 
             int benchCounter = 0;
-            for (int i = 0; i < classes.size(); i++) {
+            for (final Class clazz : classes) {
                 try {
-                    final Class clazz = classes.get(i);
                     final String camelCasedBeanName = camelCaseWord(clazz.getSimpleName());
                     Object possibleInstance = null;
                     boolean isSpringBean = false;
                     try {
                         possibleInstance = applicationContext.getBean(camelCasedBeanName);
-                        if (possibleInstance != null) {
-                            isSpringBean = true;
-                        }
+                        isSpringBean = true;
                     } catch (Exception e) {
+                        // not a spring bean
                     }
                     // If the spring bean of this class is not found try creating instance using newInstance()
                     if (possibleInstance == null) {
@@ -122,14 +121,13 @@ public final class JBenchRunner
 
                     final Object newInstance = possibleInstance;
                     final Method[] methods = clazz.getMethods();
-                    for (int j = 0; j < methods.length; j++) {
-                        final Method method = methods[j];
+                    for (final Method method : methods) {
                         method.setAccessible(true);
                         if (method.isAnnotationPresent(JBench.class)) {
                             if (displayOutput) {
                                 String name = (isSpringBean ?
-                                               String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
-                                               String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
+                                        String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
+                                        String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
                                 String workingOnOutput = String.format("%-50s ", name);
                                 System.out.print(workingOnOutput);
                             }
@@ -137,12 +135,15 @@ public final class JBenchRunner
                             final long precisionOfIteration = annotation.maxIterations();
                             long iterations = 0;
                             final long startTime = getCurrentTime();
-                            do {
-                                method.invoke(newInstance, null); // TODO:  <-- This is much faster execution
-                                //                                        method.invoke(newInstance); // TODO: than this one.... WHY?
-                                iterations++;
+                            try {
+                                do {
+                                    method.invoke(newInstance, null);
+                                    iterations++;
+                                }
+                                while (iterations < precisionOfIteration);
+                            } catch (Exception e) {
+                                LOGGER.error("Error during execution of method: {}", method, e);
                             }
-                            while (iterations < precisionOfIteration);
 
                             outputBenchmark(benchmarkData, iterations, startTime, method, displayOutput, isSpringBean);
                             if (displayOutput) {
@@ -154,12 +155,8 @@ public final class JBenchRunner
                             }
                         }
                     }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
+                } catch (Exception e) {
+                    LOGGER.error("Error during JBenchRunner execution", e);
                 }
             }
         }
@@ -167,21 +164,21 @@ public final class JBenchRunner
         // create Velocity template output into temp location
         if (!benchmarkData.isEmpty()) {
             try {
-                List<String> keys = new ArrayList<String>(benchmarkData.keySet());
+                final List<String> keys = new ArrayList<String>(benchmarkData.keySet());
 
-                File temp = new File(String.format("%s/jbench-%s.html", System.getProperty("java.io.tmpdir"), System.currentTimeMillis()));
-                System.out.println(String.format("Benchmarks HTML output: " + temp.getAbsolutePath()));
-                Properties props = new Properties();
+                final File temp = new File(String.format("%s/jbench-%s.html", System.getProperty("java.io.tmpdir"), System.currentTimeMillis()));
+                System.out.println("Benchmarks HTML output: " + temp.getAbsolutePath());
+                final Properties props = new Properties();
                 props.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
                 props.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-                VelocityEngine ve = new VelocityEngine(props);
+                final VelocityEngine ve = new VelocityEngine(props);
                 ve.init();
-                Template t = ve.getTemplate("benchmark-output.vm");
-                VelocityContext context = new VelocityContext();
-                StringBuilder tableBody = new StringBuilder();
+                final Template t = ve.getTemplate("benchmark-output.vm");
+                final VelocityContext context = new VelocityContext();
+                final StringBuilder tableBody = new StringBuilder();
                 Collections.sort(keys);
-                for (String benchmarkKey : keys) {
-                    JBenchData data = benchmarkData.get(benchmarkKey);
+                for (final String benchmarkKey : keys) {
+                    final JBenchData data = benchmarkData.get(benchmarkKey);
                     tableBody
                             .append("<tr>")
                             .append("<td>").append(data.getName()).append("</td>")
@@ -192,45 +189,48 @@ public final class JBenchRunner
                             .append("<td>").append(formatNumber(data.getAverageMs())).append("</td>")
                             .append("</tr>");
                 }
-
-                context.put("tableBody", tableBody.toString());
-                StringWriter writer = new StringWriter();
-                t.merge(context, writer);
-                FileOutputStream out = new FileOutputStream(temp);
-                out.write(writer.toString().getBytes());
-                out.close();
+                try (final FileOutputStream out = new FileOutputStream(temp)) {
+                    context.put("tableBody", tableBody.toString());
+                    final StringWriter writer = new StringWriter();
+                    t.merge(context, writer);
+                    out.write(writer.toString().getBytes());
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("Error during JBenchRunner execution", e);
             }
         }
 
         return benchmarkData;
     }
 
-    private static void outputBenchmark(final Map<String, JBenchData> benchmarkData, long iterations, long startTime,
-                                        Method method, final boolean displayOutput, final boolean isSpringBean) {
-        double speedItrPerNs = (double) iterations / (double) (getCurrentTime() - startTime);
-        double speedNsPerItr = (double) (getCurrentTime() - startTime) / (double) iterations;
-        double speedItrPerMs = speedItrPerNs * 1000000;
-        String name = (isSpringBean ?
-                       String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
-                       String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
-        JBenchData data = new JBenchData(
+    private static void outputBenchmark(final Map<String, JBenchData> benchmarkData,
+                                        final long iterations,
+                                        final long startTime,
+                                        final Method method,
+                                        final boolean displayOutput,
+                                        final boolean isSpringBean) {
+        final double speedItrPerNs = (double) iterations / (double) (getCurrentTime() - startTime);
+        final double speedNsPerItr = (double) (getCurrentTime() - startTime) / (double) iterations;
+        final double speedItrPerMs = speedItrPerNs * 1000000;
+        final String name = (isSpringBean ?
+                String.format("%s.%s *", method.getDeclaringClass().getSimpleName(), method.getName()) :
+                String.format("%s.%s", method.getDeclaringClass().getSimpleName(), method.getName()));
+        final JBenchData data = new JBenchData(
                 name,
                 (getCurrentTime() - startTime),
-                (getCurrentTime() - startTime) / 1000000l,
+                ((double) (getCurrentTime() - startTime)) / 1000000d,
                 iterations,
                 speedItrPerNs,
                 speedItrPerMs,
                 (speedNsPerItr),
-                (speedNsPerItr / 1000000l));
+                (speedNsPerItr / 1000000d));
         if (displayOutput) {
-            String output = String.format(defaultOutputPattern,
-                                          formatNumber(data.getTimePassedNs()),
-                                          formatNumber(data.getTimePassedMs()),
-                                          formatNumber(data.getIterations()),
-                                          formatNumber(data.getSpeedMs()),
-                                          formatNumber(data.getAverageMs()));
+            final String output = String.format(defaultOutputPattern,
+                    formatNumber(data.getTimePassedNs()),
+                    formatNumber(data.getTimePassedMs()),
+                    formatNumber(data.getIterations()),
+                    formatNumber(data.getSpeedMs()),
+                    formatNumber(data.getAverageMs()));
             System.out.println(output);
         }
         benchmarkData.put(name, data);
@@ -238,26 +238,26 @@ public final class JBenchRunner
 
     private static void printDefaultHeader(final boolean displayOutput) {
         if (displayOutput) {
-            String output = String.format(defaultHeaderPattern,
-                                          "Benchmark name",
-                                          "Time passed (ns)",
-                                          "Time passed (ms)",
-                                          "Iterations",
-                                          "Speed (exec/ms)",
-                                          "Average (ms)");
+            final String output = String.format(defaultHeaderPattern,
+                    "Benchmark name",
+                    "Time passed (ns)",
+                    "Time passed (ms)",
+                    "Iterations",
+                    "Speed (exec/ms)",
+                    "Average (ms)");
             System.out.println(output);
             printLines();
         }
     }
 
     private static void printLines() {
-        String output2 = String.format(defaultHeaderPattern,
-                                       "----------------------------------------",
-                                       "--------------------",
-                                       "--------------------",
-                                       "--------------------",
-                                       "--------------------",
-                                       "--------------------");
+        final String output2 = String.format(defaultHeaderPattern,
+                "----------------------------------------",
+                "--------------------",
+                "--------------------",
+                "--------------------",
+                "--------------------",
+                "--------------------");
         System.out.println(output2);
     }
 
@@ -266,7 +266,7 @@ public final class JBenchRunner
         return System.nanoTime();
     }
 
-    private static String formatNumber(double number) {
+    private static String formatNumber(final double number) {
         if (number > 10) {
             nFmt.setMaximumFractionDigits(0);
         } else {
@@ -275,14 +275,14 @@ public final class JBenchRunner
         return nFmt.format(number);
     }
 
-    private static String camelCaseWord(String src) {
-        StringBuilder camelCasedBeanName = new StringBuilder(src);
+    private static String camelCaseWord(final String src) {
+        final StringBuilder camelCasedBeanName = new StringBuilder(src);
         camelCasedBeanName.setCharAt(0, Character.toLowerCase(camelCasedBeanName.charAt(0)));
         return camelCasedBeanName.toString();
     }
 
     @Autowired
-    public void setApplicationContext(ApplicationContext context) throws BeansException {
+    public void setApplicationContext(final ApplicationContext context) throws BeansException {
         applicationContext = context;
     }
 }

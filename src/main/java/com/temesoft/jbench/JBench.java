@@ -10,13 +10,13 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JBench
-{
+public @interface JBench {
     /**
      * Defines the number of benchmark iterations for given method
      * Default number of iterations is 1 for individual single benchmark execution
+     *
      * @return - long
      */
-    long maxIterations () default 1;
+    long maxIterations() default 1;
 
 }

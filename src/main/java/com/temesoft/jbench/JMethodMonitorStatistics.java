@@ -1,40 +1,25 @@
 package com.temesoft.jbench;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
-/**
- * 
- */
-public class JMethodMonitorStatistics
-    implements Serializable
-{
-    private String className    = null;
-    private String methodName   = null;
-    private long minTime        = 0;
-    private long maxTime        = 0;
-    private long lastTime       = 0;
-    private double avgTime      = 0;
-    private long callCount      = 0;
+public class JMethodMonitorStatistics implements Serializable {
 
-    @Override
-    public String toString()
-    {
-        final StringBuffer sb = new StringBuffer();
-        sb.append("JMethodMonitorStatistics");
-        sb.append("{className='").append(className).append('\'');
-        sb.append(", methodName='").append(methodName).append('\'');
-        sb.append(", minTime=").append(minTime);
-        sb.append(", maxTime=").append(maxTime);
-        sb.append(", lastTime=").append(lastTime);
-        sb.append(", avgTime=").append(avgTime);
-        sb.append(", callCount=").append(callCount);
-        sb.append('}');
-        return sb.toString();
-    }
+    private String className;
+    private String methodName;
+    private long minTime;
+    private long maxTime;
+    private long lastTime;
+    private double avgTime;
+    private long callCount;
 
-    public JMethodMonitorStatistics(String className, String methodName, long minTime, long maxTime,
-                                    double avgTime, long lastTime, long callCount)
-    {
+    public JMethodMonitorStatistics(final String className,
+                                    final String methodName,
+                                    final long minTime,
+                                    final long maxTime,
+                                    final double avgTime,
+                                    final long lastTime,
+                                    final long callCount) {
         this.className = className;
         this.methodName = methodName;
         this.minTime = minTime;
@@ -44,73 +29,72 @@ public class JMethodMonitorStatistics
         this.lastTime = lastTime;
     }
 
-    public String getClassName()
-    {
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", JMethodMonitorStatistics.class.getSimpleName() + "[", "]")
+                .add("className='" + className + "'")
+                .add("methodName='" + methodName + "'")
+                .add("minTime=" + minTime)
+                .add("maxTime=" + maxTime)
+                .add("lastTime=" + lastTime)
+                .add("avgTime=" + avgTime)
+                .add("callCount=" + callCount)
+                .toString();
+    }
+
+    public String getClassName() {
         return className;
     }
 
-    public void setClassName(String className)
-    {
+    public void setClassName(String className) {
         this.className = className;
     }
 
-    public String getMethodName()
-    {
+    public String getMethodName() {
         return methodName;
     }
 
-    public void setMethodName(String methodName)
-    {
+    public void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
-    public long getMinTime()
-    {
+    public long getMinTime() {
         return minTime;
     }
 
-    public void setMinTime(long minTime)
-    {
+    public void setMinTime(long minTime) {
         this.minTime = minTime;
     }
 
-    public long getMaxTime()
-    {
+    public long getMaxTime() {
         return maxTime;
     }
 
-    public void setMaxTime(long maxTime)
-    {
+    public void setMaxTime(long maxTime) {
         this.maxTime = maxTime;
     }
 
-    public double getAvgTime()
-    {
+    public double getAvgTime() {
         return avgTime;
     }
 
-    public void setAvgTime(double avgTime)
-    {
+    public void setAvgTime(double avgTime) {
         this.avgTime = avgTime;
     }
 
-    public long getCallCount()
-    {
+    public long getCallCount() {
         return callCount;
     }
 
-    public void setCallCount(long callCount)
-    {
+    public void setCallCount(long callCount) {
         this.callCount = callCount;
     }
 
-    public long getLastTime()
-    {
+    public long getLastTime() {
         return lastTime;
     }
 
-    public void setLastTime(long lastTime)
-    {
+    public void setLastTime(long lastTime) {
         this.lastTime = lastTime;
     }
 }

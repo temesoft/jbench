@@ -14,26 +14,21 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/application-context.xml")
-public class JBenchTest
-    extends TestCase
-{
+public class JBenchTest extends TestCase {
     @Autowired
     SomeServiceBean someServiceBean = null; // will be set by spring
 
     @Test
-    public void testJBench()
-    {
+    public void testJBench() {
         Map<String, JBenchData> benchDataMap = JBenchRunner.executeAll(true);
         assertNotNull("JBenchData map object can not be null", benchDataMap);
-        assertEquals("JBenchData map object can not be empty", false, benchDataMap.isEmpty());
+        assertFalse("JBenchData map object can not be empty", benchDataMap.isEmpty());
     }
 
     @Test
-    public void testJMethodMonitor()
-    {
-        JMethodMonitorService service = new JMethodMonitorService();
-        for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet())
-        {
+    public void testJMethodMonitor() {
+        final JMethodMonitorService service = new JMethodMonitorService();
+        for (Map.Entry<String, JMethodMonitorStatistics> stats : service.getAllStats().entrySet()) {
             System.out.println(stats.getValue());
         }
     }
